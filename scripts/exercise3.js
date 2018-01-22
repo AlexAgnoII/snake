@@ -17,26 +17,28 @@ let state,
     playScene,
     endScene;
 
+//All these are image holders
 let snakeLogo,
     playButton,
     backButton,
     selectedLevel,
     selectedLevelValue,
-    selectedActualValue,
-    level1Button,
+
+    level1Button, 
     level2Button,
     level3Button;
 
-let curentScore = 0,
-    highScore = 0, //contains highscore from storage.
-    titlehighScore,
-    titlescoreMessage,
-    endMessage,
-    endScoreValue,
-    endScoreMessage,
-    endHighScoreMsg,
-    endHighScoreVal,
-    endHint;
+let curentScore = 0, //VALUE
+    highScore = 0, //contains highscore from storage. VALUE
+    selectedActualValue, //VALUE
+    titlehighScore, //TEXT
+    titlescoreMessage,//TEXT
+    endMessage,//TEXT
+    endScoreValue,//TEXT
+    endScoreMessage,//TEXT
+    endHighScoreMsg,//TEXT
+    endHighScoreVal,//TEXT
+    endHint;//TEXT
 
 let snakeBody = [],
     snakeMove,
@@ -341,41 +343,45 @@ function initializeSnakeBody() {
     down = keyboard(40);
     left = keyboard(37);
     right = keyboard(39);
-    snakeMove = up;
     
-    snakeBody[0].vx = 0
-    snakeBody[0].vy = 0
+    //initialize snake going up
+    snakeMove = up;
+    snakeBody[0].vx = 0;
+    snakeBody[0].vy = -1;
     
     up.press = function() {
-        snakeBody[0].vx = 0;
-        snakeBody[0].vy = -1;
-        snakeMove = up;
-        console.log("up")
-        console.log(snakeBody[0].vx)
+        if(snakeMove != up && snakeMove != down) {
+          snakeBody[0].vx = 0;
+          snakeBody[0].vy = -1;
+          snakeMove = up;
+        }
+
     }
 
     down.press = function() {
-        snakeBody[0].vx = 0;
-        snakeBody[0].vy = +1;
-        snakeMove = down;
-        console.log("down")
-        console.log(snakeBody[0].vx)
+        if(snakeMove != down && snakeMove != up) {
+            snakeBody[0].vx = 0;
+            snakeBody[0].vy = +1;
+            snakeMove = down;   
+        }
+
     }
 
     left.press = function() {
-        snakeBody[0].vx = -1;
-        snakeBody[0].vy = 0;
-        snakeMove = left;
-        console.log("left")
-                console.log(snakeBody[0].vy)
+        if(snakeMove != left && snakeMove != right) {
+            snakeBody[0].vx = -1;
+            snakeBody[0].vy = 0;
+            snakeMove = left;
+        }
     }
     
     right.press = function() {
-        snakeBody[0].vx = +1;
-        snakeBody[0].vy = 0;
-        snakeMove = right;
-        console.log("right")
-                console.log(snakeBody[0].vy)
+        if(snakeMove != right && snakeMove != left) {
+            snakeBody[0].vx = +1;
+            snakeBody[0].vy = 0;
+            snakeMove = right;
+        }
+
     }
 }
 
