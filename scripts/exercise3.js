@@ -27,7 +27,12 @@ let snakeLogo,
 
 let curentScore,
     highScore,
-    scoreMessage;
+    scoreMessage,
+    endMessage,
+    endScore;
+
+let snakeBody = [];
+
 
 let style = new PIXI.TextStyle({
   fontFamily: "Arial",
@@ -47,6 +52,7 @@ let SNAKE_LOGO = "images/snakelogo.png",
     LEVEL_1_IMG = "images/level1.png",
     LEVEL_2_IMG = "images/level2.png",
     LEVEL_3_IMG = "images/level3.png",
+    END_IMG = "images/gameover.png",
     SPEED_1 = 50,
     SPEED_2 = 125,
     SPEED_3 = 215;
@@ -59,7 +65,8 @@ PIXI.loader
           PLAY_IMG,
           LEVEL_1_IMG, 
           LEVEL_2_IMG, 
-          LEVEL_3_IMG])
+          LEVEL_3_IMG,
+          END_IMG])
     .load(setup);
 
 function setup() {
@@ -120,7 +127,7 @@ function initializeTitle() {
     playButton.buttonMode = true;
     playButton.on("pointerdown", function() {
         console.log("play!");
-        state = play;
+        state = end;
     })
     titleScene.addChild(playButton);
     
@@ -188,6 +195,12 @@ function initializePlay() {
 function initializeEnd() {
     endScene = new PIXI.Container();
     app.stage.addChild(endScene);
+    
+    endMessage = new PIXI.Sprite(PIXI.loader.resources[END_IMG].texture);
+    endMessage.position.set(gameWidth / 2, gameHeight / 4);
+    endMessage.scale.set(0.6, 0.6);
+    endMessage.anchor.set(0.5,0.5);
+    endScene.addChild(endMessage);
     
     endScene.visible = false;  
 }
