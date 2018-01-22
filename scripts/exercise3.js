@@ -91,9 +91,17 @@ function initializeTitle() {
     snakeLogo = new PIXI.Sprite(PIXI.loader.resources[SNAKE_LOGO].texture);
     snakeLogo.position.set(gameWidth / 2, 0);
     snakeLogo.anchor.set(0.5, 0);
-    
-    
-    
     titleScene.addChild(snakeLogo);
+    
+    playButton = new PIXI.Sprite(PIXI.loader.resources[PLAY_IMG].texture);
+    playButton.position.set(gameWidth / 2, gameHeight);
+    playButton.scale.set(0.5, 0.5);
+    playButton.anchor.set(0.5, 1);
+    playButton.interactive = true;
+    playButton.buttonMode = true;
+    playButton.on("pointerdown", function() {
+        console.log("play!")
+    })
+    titleScene.addChild(playButton);
     
 }
