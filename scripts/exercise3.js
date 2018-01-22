@@ -37,7 +37,8 @@ let curentScore = 0,
     endHighScoreVal,
     endHint;
 
-let snakeBody = [];
+let snakeBody = [],
+    snakeMove;
 
 
 let style = new PIXI.TextStyle({
@@ -53,16 +54,17 @@ let style = new PIXI.TextStyle({
   dropShadowDistance: 1,
 });
 
-let SNAKE_LOGO = "images/snakelogo.png",
-    PLAY_IMG = "images/play.png",
-    LEVEL_1_IMG = "images/level1.png",
-    LEVEL_2_IMG = "images/level2.png",
-    LEVEL_3_IMG = "images/level3.png",
-    END_IMG = "images/gameover.png",
-    BACK_IMG = "images/back.png",
-    SPEED_1 = 50,
-    SPEED_2 = 125,
-    SPEED_3 = 215;
+const SNAKE_LOGO = "images/snakelogo.png",
+      PLAY_IMG = "images/play.png",
+      LEVEL_1_IMG = "images/level1.png",
+      LEVEL_2_IMG = "images/level2.png",
+      LEVEL_3_IMG = "images/level3.png",
+      END_IMG = "images/gameover.png",
+      BACK_IMG = "images/back.png",
+      SPEED_1 = 50,
+      SPEED_2 = 125,
+      SPEED_3 = 215,
+      SNAKE_INITIAL_SIZE = 3;
 
 
 gameDiv.appendChild(app.view);
@@ -196,8 +198,10 @@ function initializePlay() {
     playScene = new PIXI.Container();
     app.stage.addChild(playScene);
     
+    initializeSnakeBody();
+    
+    
     playScene.visible = false;
-
 }
 
 function initializeEnd() {
@@ -289,4 +293,36 @@ function keyboard(keyCode) {
     "keyup", key.upHandler.bind(key), false
   );
   return key;
+}
+
+function initializeSnakeBody() {
+    let currX, currY;
+    for(let i = 0; i < SNAKE_INITIAL_SIZE; i++) {
+        snakeBody.push(createSnake());
+        
+        //first, meaning head.
+        if(i === 0 ) {
+            snakeBody[i].position.set(gameWidth/2, gameHeight/2);
+            currX = gameWidth/2;
+            currY = gameHeight/2;
+        }
+        else {
+            currY += snakeBody[i].height;
+            snakeBody[i].position.set(currX, currY);
+        }
+    }
+    
+    //initialize move for the head ONLY.
+    
+}
+
+function createSnake() {
+    let snake = new PIXI.Graphics();
+    snake.lineStyle(2, 0xffffff, 1);
+    snake.beginFill(0xff0000);
+    snake.drawRect(0, 0, 35, 35);
+    snake.endFill();
+    
+    playScene.addChild(snake);
+    return snake;
 }
