@@ -53,7 +53,11 @@ let SNAKE_LOGO = "images/snakelogo.png",
 gameDiv.appendChild(app.view);
 
 PIXI.loader
-    .add([])
+    .add([SNAKE_LOGO, 
+          PLAY_IMG,
+          LEVEL_1_IMG, 
+          LEVEL_2_IMG, 
+          LEVEL_3_IMG])
     .load(setup);
 
 function setup() {
@@ -83,4 +87,13 @@ function end() {
 function initializeTitle() {
     titleScene = new PIXI.Container();
     app.stage.addChild(titleScene);
+    
+    snakeLogo = new PIXI.Sprite(PIXI.loader.resources[SNAKE_LOGO].texture);
+    snakeLogo.position.set(gameWidth / 2, 0);
+    snakeLogo.anchor.set(0.5, 0);
+    
+    
+    
+    titleScene.addChild(snakeLogo);
+    
 }
