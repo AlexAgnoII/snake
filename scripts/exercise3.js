@@ -135,7 +135,7 @@ function initializeTitle() {
     playButton.buttonMode = true;
     playButton.on("pointerdown", function() {
         console.log("play!");
-        state = end;
+        state = play;
     })
     titleScene.addChild(playButton);
     
