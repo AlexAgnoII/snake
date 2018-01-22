@@ -22,6 +22,7 @@ let snakeLogo,
     backButton,
     selectedLevel,
     selectedLevelValue,
+    selectedActualValue,
     level1Button,
     level2Button,
     level3Button;
@@ -38,7 +39,13 @@ let curentScore = 0,
     endHint;
 
 let snakeBody = [],
-    snakeMove;
+    snakeMove,
+    up,
+    down,
+    left,
+    right,
+    customVY,
+    customVX;
 
 
 let style = new PIXI.TextStyle({
@@ -61,9 +68,9 @@ const SNAKE_LOGO = "images/snakelogo.png",
       LEVEL_3_IMG = "images/level3.png",
       END_IMG = "images/gameover.png",
       BACK_IMG = "images/back.png",
-      SPEED_1 = 50,
-      SPEED_2 = 125,
-      SPEED_3 = 215,
+      SPEED_1 = 5,
+      SPEED_2 = 10,
+      SPEED_3 = 15,
       SNAKE_INITIAL_SIZE = 3;
 
 
@@ -108,10 +115,27 @@ function play() {
     if(!playScene.visible) {
         playScene.visible = true;
         endScene.visible = false;
-        titleScene.visible = false;       
+        titleScene.visible = false;
+        determineSpeed();
     }
+    console.log(selectedActualValue)
+   snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
+   snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
 }
 
+function determineSpeed() {
+    let temp = selectedLevelValue.text;
+            
+    if(temp === "1") {
+        selectedActualValue = SPEED_1;
+    }
+    else if(temp === "2") {
+        selectedActualValue = SPEED_2;
+    }
+    else {    
+        selectedActualValue = SPEED_3;
+    }
+}
 function end() {
     if(!endScene.visible) {
         endScene.visible = true;
@@ -313,7 +337,46 @@ function initializeSnakeBody() {
     }
     
     //initialize move for the head ONLY.
+    up = keyboard(38);
+    down = keyboard(40);
+    left = keyboard(37);
+    right = keyboard(39);
+    snakeMove = up;
     
+    snakeBody[0].vx = 0
+    snakeBody[0].vy = 0
+    
+    up.press = function() {
+        snakeBody[0].vx = 0;
+        snakeBody[0].vy = -1;
+        snakeMove = up;
+        console.log("up")
+        console.log(snakeBody[0].vx)
+    }
+
+    down.press = function() {
+        snakeBody[0].vx = 0;
+        snakeBody[0].vy = +1;
+        snakeMove = down;
+        console.log("down")
+        console.log(snakeBody[0].vx)
+    }
+
+    left.press = function() {
+        snakeBody[0].vx = -1;
+        snakeBody[0].vy = 0;
+        snakeMove = left;
+        console.log("left")
+                console.log(snakeBody[0].vy)
+    }
+    
+    right.press = function() {
+        snakeBody[0].vx = +1;
+        snakeBody[0].vy = 0;
+        snakeMove = right;
+        console.log("right")
+                console.log(snakeBody[0].vy)
+    }
 }
 
 function createSnake() {
