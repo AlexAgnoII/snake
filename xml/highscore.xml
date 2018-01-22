@@ -1,0 +1,5 @@
+<snakeGame>
+    <node name="highScoreStorage">
+        <node name="highScore"> 0 </node>
+    </node>
+</snakeGame>
