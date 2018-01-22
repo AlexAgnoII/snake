@@ -23,7 +23,6 @@ let snakeLogo,
     backButton,
     selectedLevel,
     selectedLevelValue,
-
     level1Button, 
     level2Button,
     level3Button;
@@ -41,6 +40,8 @@ let curentScore = 0, //VALUE
     endHint;//TEXT
 
 let snakeBody = [],
+    prevX,
+    prevY,
     snakeMove,
     up,
     down,
@@ -119,10 +120,31 @@ function play() {
         endScene.visible = false;
         titleScene.visible = false;
         determineSpeed();
+        reset();
     }
-    console.log(selectedActualValue)
-   snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
-   snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
+    
+//   prevX = snakeBody[0].vx;
+//   prevY= snakeBodu[0].vy;
+//   snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
+//   snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
+    
+   //move rest of body
+    moveRestOfBody();
+}
+
+function moveRestOfBody() {
+    let snakeCurrSize = snakeBody.length;
+    
+    for(let i = snakeCurrSize-1; i > 0; i--) {
+        snakeBody[i].vx = snakeBody[i-1].vx;
+        snakeBody[i].vy = snakeBody[i-1].vy;
+        
+        snakeBody[i].x += snakeBody[i].vx * selectedActualValue;
+        snakeBody[i].y += snakeBody[i].vy * selectedActualValue;
+        
+    }
+        snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
+        snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
 }
 
 function determineSpeed() {
@@ -335,6 +357,8 @@ function initializeSnakeBody() {
         else {
             currY += snakeBody[i].height;
             snakeBody[i].position.set(currX, currY);
+            snakeBody[i].vx = 0;
+            snakeBody[i].vy = 0;
         }
     }
     
@@ -394,4 +418,11 @@ function createSnake() {
     
     playScene.addChild(snake);
     return snake;
+}
+
+function reset() {
+    curentScore = 0;
+    prevX = 0;
+    prevY = 0
+    //make snake 3 body parts again.
 }
