@@ -1,17 +1,21 @@
 "use strict";
 
-
-
+let gameDiv = document.getElementById("game");
+const gameHeight = gameDiv.offsetHeight;
+const gameWidth = gameDiv.offsetWidth;
 let app = new PIXI.Application({ 
-    width: 700, 
-    height: 700,                       
+    width: gameHeight, 
+    height: gameWidth,                       
     antialias: true, 
     transparent: false, 
     resolution: 1
   }
 );
 
-let state;
+let state,
+    titleScene,
+    playScene,
+    endScene;
 
 let snakeLogo,
     playButton,
@@ -23,7 +27,7 @@ let curentScore,
     highScore,
     scoreMessage;
 
-let style = new TextStyle({
+let style = new PIXI.TextStyle({
   fontFamily: "Arial",
   fontSize: 36,
   fill: '#ff3300',
@@ -45,6 +49,9 @@ let SNAKE_LOGO = "images/snakelogo.png",
     SPEED_2 = 125,
     SPEED_3 = 215;
 
+
+gameDiv.appendChild(app.view);
+
 PIXI.loader
     .add([])
     .load(setup);
@@ -53,7 +60,7 @@ function setup() {
     
     initializeTitle();
     
-    state = play();
+    state = title;
     app.ticker.add(delta => gameLoop());
 }
 
@@ -74,5 +81,6 @@ function end() {
 }
 
 function initializeTitle() {
-    
+    titleScene = new PIXI.Container();
+    app.stage.addChild(titleScene);
 }
