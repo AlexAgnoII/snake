@@ -27,13 +27,15 @@ let snakeLogo,
     level3Button;
 
 let curentScore = 0,
-    highScore = 0,
-    scoreMessage,
+    highScore = 0, //contains highscore from storage.
+    titlehighScore,
+    titlescoreMessage,
     endMessage,
     endScoreValue,
     endScoreMessage,
     endHighScoreMsg,
-    endHighScoreVal;
+    endHighScoreVal,
+    endHint;
 
 let snakeBody = [];
 
@@ -137,15 +139,15 @@ function initializeTitle() {
     })
     titleScene.addChild(playButton);
     
-    scoreMessage = new PIXI.Text("High Score: ", style);
-    scoreMessage.anchor.set(0.5, 0.5);
-    scoreMessage.position.set(gameWidth / 3, gameHeight / 3)
-    titleScene.addChild(scoreMessage);
+    titlescoreMessage = new PIXI.Text("High Score: ", style);
+    titlescoreMessage.anchor.set(0.5, 0.5);
+    titlescoreMessage.position.set(gameWidth / 3, gameHeight / 3)
+    titleScene.addChild(titlescoreMessage);
     
-    highScore = new PIXI.Text(highScore, style);
-    highScore.anchor.set(0, 0.5);
-    highScore.position.set(gameWidth / 2, gameHeight / 3);
-    titleScene.addChild(highScore);
+    titlehighScore = new PIXI.Text(highScore, style);
+    titlehighScore.anchor.set(0, 0.5);
+    titlehighScore.position.set(gameWidth / 2, gameHeight / 3);
+    titleScene.addChild(titlehighScore);
     
     level1Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_1_IMG].texture);
     level1Button.position.set(gameWidth / 4, gameHeight / 2 + 100);
@@ -226,9 +228,27 @@ function initializeEnd() {
     endScene.addChild(endScoreMessage);
     
     endScoreValue = new PIXI.Text(curentScore, style);
-    endScoreValue.position.set(gameWidth/2 + 80, gameHeight/2);
+    endScoreValue.position.set(gameWidth/2 + 40, gameHeight/2);
     endScoreValue.anchor.set(0, 0.5);
     endScene.addChild(endScoreValue);
+    
+    endHighScoreMsg = new PIXI.Text("High Score: ", style);
+    endHighScoreMsg.position.set(gameWidth/2, gameHeight/2 + 50);
+    endHighScoreMsg.anchor.set(1, 0.5);
+    endScene.addChild(endHighScoreMsg);
+    
+    console.log(highScore)
+    endHighScoreVal = new PIXI.Text(highScore, style);
+    endHighScoreVal.position.set(gameWidth/2 + 40, gameHeight/2 + 50);
+    endHighScoreVal.anchor.set(0, 0.5);
+    endScene.addChild(endHighScoreVal);
+    
+    endHint = new PIXI.Text('( Retry again by pressing "R" )', style);
+    endHint.position.set(gameWidth/2, gameHeight - 450);
+    endHint.scale.set(0.6, 0.6);
+    endHint.anchor.set(0.5, 1);
+    endScene.addChild(endHint);
+    
     
     
     endScene.visible = false;  
