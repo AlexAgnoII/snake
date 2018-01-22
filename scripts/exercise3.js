@@ -32,12 +32,12 @@ let curentScore,
 let style = new PIXI.TextStyle({
   fontFamily: "Arial",
   fontSize: 30,
-  fill: '#ff3300',
+  fill: 'white',
   stroke: "#000000",
-  strokeThickness: 4,
+  strokeThickness: 1,
   dropShadow: true,
   dropShadowColor: "white",
-  dropShadowBlur: 4,
+  dropShadowBlur: 1,
   dropShadowAngle: Math.PI / 6,
   dropShadowDistance: 1,
 });
@@ -129,9 +129,13 @@ function initializeTitle() {
     titleScene.addChild(level3Button);
     
     selectedLevel = new PIXI.Text("Selected Level: ", style);
+    selectedLevel.position.set(gameWidth/3, gameHeight/2);
+    selectedLevel.anchor.set(0.5, 0.5);
     titleScene.addChild(selectedLevel);
     
     selectedLevelValue = new PIXI.Text("0", style);
+    selectedLevelValue.anchor.set(0, 0.5);
+    selectedLevelValue.position.set(gameWidth / 2 + 80, gameHeight / 2);
     titleScene.addChild(selectedLevelValue);
     
     
