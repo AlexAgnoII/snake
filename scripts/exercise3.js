@@ -29,7 +29,7 @@ let curentScore,
 
 let style = new PIXI.TextStyle({
   fontFamily: "Arial",
-  fontSize: 36,
+  fontSize: 30,
   fill: '#ff3300',
   stroke: "#000000",
   strokeThickness: 4,
@@ -100,8 +100,19 @@ function initializeTitle() {
     playButton.interactive = true;
     playButton.buttonMode = true;
     playButton.on("pointerdown", function() {
-        console.log("play!")
+        console.log("play!");
+        state = play;
     })
     titleScene.addChild(playButton);
+    
+    scoreMessage = new PIXI.Text("High Score: ", style);
+    scoreMessage.anchor.set(0.5, 0.5);
+    scoreMessage.position.set(gameWidth / 3, gameHeight / 3)
+    titleScene.addChild(scoreMessage);
+    
+    highScore = new PIXI.Text("123123123", style);
+    highScore.anchor.set(0, 0.5);
+    highScore.position.set(gameWidth / 2, gameHeight / 3);
+    titleScene.addChild(highScore);
     
 }
