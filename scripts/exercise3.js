@@ -68,7 +68,6 @@ function setup() {
     initializePlay();
     initializeEnd();
 
-    
     state = title;
     app.ticker.add(delta => gameLoop());
 }
@@ -78,21 +77,30 @@ function gameLoop() {
 }
 
 function title() {
-    titleScene.visible = true;
-    playScene.visible = false;
-    endScene.visible = false;
+    if(!titleScene.visible) {
+        titleScene.visible = true;
+        playScene.visible = false;
+        endScene.visible = false;       
+    }
+  
+
+
 }
 
 function play() {
-    playScene.visible = true;
-    endScene.visible = false;
-    titleScene.visible = false;
+    if(!playScene.visible) {
+        playScene.visible = true;
+        endScene.visible = false;
+        titleScene.visible = false;       
+    }
 }
 
 function end() {
-    endScene.visible = true;
-    playScene.visible = false;
-    titleScene.visible = false;
+    if(!endScene.visible) {
+        endScene.visible = true;
+        playScene.visible = false;
+        titleScene.visible = false;         
+    }
 }
 
 function initializeTitle() {
@@ -162,6 +170,7 @@ function initializeTitle() {
     selectedLevelValue.position.set(gameWidth / 2 + 80, gameHeight / 2);
     selectedLevelValue.text = "1";
     titleScene.addChild(selectedLevelValue);
+    titleScene.visible = true;
 }
 
 function changeLevel(level) {
@@ -171,9 +180,14 @@ function changeLevel(level) {
 function initializePlay() {
     playScene = new PIXI.Container();
     app.stage.addChild(playScene);
+    
+    playScene.visible = false;
+
 }
 
 function initializeEnd() {
     endScene = new PIXI.Container();
     app.stage.addChild(endScene);
+    
+    endScene.visible = false;  
 }
