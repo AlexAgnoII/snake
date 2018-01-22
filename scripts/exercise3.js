@@ -19,6 +19,8 @@ let state,
 
 let snakeLogo,
     playButton,
+    selectedLevel,
+    selectedLevelValue,
     level1Button,
     level2Button,
     level3Button;
@@ -114,5 +116,24 @@ function initializeTitle() {
     highScore.anchor.set(0, 0.5);
     highScore.position.set(gameWidth / 2, gameHeight / 3);
     titleScene.addChild(highScore);
+    
+    level1Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_1_IMG].texture);
+    titleScene.addChild(level1Button);
+
+    
+    level2Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_2_IMG].texture);
+    titleScene.addChild(level2Button);
+    
+    
+    level3Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_3_IMG].texture);
+    titleScene.addChild(level3Button);
+    
+    selectedLevel = new PIXI.Text("Selected Level: ", style);
+    titleScene.addChild(selectedLevel);
+    
+    selectedLevelValue = new PIXI.Text("0", style);
+    titleScene.addChild(selectedLevelValue);
+    
+    
     
 }
