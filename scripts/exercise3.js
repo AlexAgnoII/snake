@@ -13,7 +13,28 @@ let app = new PIXI.Application({
 
 let state;
 
-let snakeLogo
+let snakeLogo,
+    playButton,
+    level1Button,
+    level2Button,
+    level3Button;
+
+let curentScore,
+    highScore,
+    scoreMessage;
+
+let style = new TextStyle({
+  fontFamily: "Arial",
+  fontSize: 36,
+  fill: '#ff3300',
+  stroke: "#000000",
+  strokeThickness: 4,
+  dropShadow: true,
+  dropShadowColor: "white",
+  dropShadowBlur: 4,
+  dropShadowAngle: Math.PI / 6,
+  dropShadowDistance: 1,
+});
 
 let SNAKE_LOGO = "images/snakelogo.png",
     PLAY_IMG = "images/play.png",
