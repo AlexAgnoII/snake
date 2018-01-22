@@ -19,17 +19,21 @@ let state,
 
 let snakeLogo,
     playButton,
+    backButton,
     selectedLevel,
     selectedLevelValue,
     level1Button,
     level2Button,
     level3Button;
 
-let curentScore,
-    highScore,
+let curentScore = 0,
+    highScore = 0,
     scoreMessage,
     endMessage,
-    endScore;
+    endScoreValue,
+    endScoreMessage,
+    endHighScoreMsg,
+    endHighScoreVal;
 
 let snakeBody = [];
 
@@ -53,6 +57,7 @@ let SNAKE_LOGO = "images/snakelogo.png",
     LEVEL_2_IMG = "images/level2.png",
     LEVEL_3_IMG = "images/level3.png",
     END_IMG = "images/gameover.png",
+    BACK_IMG = "images/back.png",
     SPEED_1 = 50,
     SPEED_2 = 125,
     SPEED_3 = 215;
@@ -66,7 +71,8 @@ PIXI.loader
           LEVEL_1_IMG, 
           LEVEL_2_IMG, 
           LEVEL_3_IMG,
-          END_IMG])
+          END_IMG,
+          BACK_IMG])
     .load(setup);
 
 function setup() {
@@ -136,7 +142,7 @@ function initializeTitle() {
     scoreMessage.position.set(gameWidth / 3, gameHeight / 3)
     titleScene.addChild(scoreMessage);
     
-    highScore = new PIXI.Text("123123123", style);
+    highScore = new PIXI.Text(highScore, style);
     highScore.anchor.set(0, 0.5);
     highScore.position.set(gameWidth / 2, gameHeight / 3);
     titleScene.addChild(highScore);
@@ -201,6 +207,29 @@ function initializeEnd() {
     endMessage.scale.set(0.6, 0.6);
     endMessage.anchor.set(0.5,0.5);
     endScene.addChild(endMessage);
+    
+    backButton = new PIXI.Sprite(PIXI.loader.resources[BACK_IMG].texture);
+    backButton.position.set(gameWidth / 2, gameHeight - 100);
+    backButton.scale.set(0.2, 0.2);
+    backButton.anchor.set(0.5, 1);
+    backButton.interactive = true;
+    backButton.buttonMode = true;
+    backButton.on("pointerdown", function() {
+        console.log("back to title")
+        state = title;
+    }); 
+    endScene.addChild(backButton);
+    
+    endScoreMessage = new PIXI.Text("Your score: ", style);
+    endScoreMessage.position.set(gameWidth/2, gameHeight/2);
+    endScoreMessage.anchor.set(1, 0.5);
+    endScene.addChild(endScoreMessage);
+    
+    endScoreValue = new PIXI.Text(curentScore, style);
+    endScoreValue.position.set(gameWidth/2 + 80, gameHeight/2);
+    endScoreValue.anchor.set(0, 0.5);
+    endScene.addChild(endScoreValue);
+    
     
     endScene.visible = false;  
 }
