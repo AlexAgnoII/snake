@@ -65,6 +65,9 @@ PIXI.loader
 function setup() {
     
     initializeTitle();
+    initializePlay();
+    initializeEnd();
+
     
     state = title;
     app.ticker.add(delta => gameLoop());
@@ -75,15 +78,21 @@ function gameLoop() {
 }
 
 function title() {
-    
+    titleScene.visible = true;
+    playScene.visible = false;
+    endScene.visible = false;
 }
 
 function play() {
-    
+    playScene.visible = true;
+    endScene.visible = false;
+    titleScene.visible = false;
 }
 
 function end() {
-    
+    endScene.visible = true;
+    playScene.visible = false;
+    titleScene.visible = false;
 }
 
 function initializeTitle() {
@@ -118,14 +127,29 @@ function initializeTitle() {
     titleScene.addChild(highScore);
     
     level1Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_1_IMG].texture);
+    level1Button.position.set(gameWidth / 4, gameHeight / 2 + 100);
+    level1Button.anchor.set(0.5, 0.5);
+    level1Button.interactive = true;
+    level1Button.buttonMode = true;
+    level1Button.on("pointerdown", () => changeLevel("1"));
     titleScene.addChild(level1Button);
 
     
     level2Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_2_IMG].texture);
+    level2Button.position.set(gameWidth / 2, gameHeight / 2 + 100);
+    level2Button.anchor.set(0.5, 0.5);
+    level2Button.interactive = true;
+    level2Button.buttonMode = true;
+    level2Button.on("pointerdown", () => changeLevel("2"));
     titleScene.addChild(level2Button);
     
     
     level3Button = new PIXI.Sprite(PIXI.loader.resources[LEVEL_3_IMG].texture);
+    level3Button.position.set(gameWidth / 2 + 175, gameHeight / 2 + 100);
+    level3Button.anchor.set(0.5, 0.5);
+    level3Button.interactive = true;
+    level3Button.buttonMode = true;
+    level3Button.on("pointerdown", () => changeLevel("3"));
     titleScene.addChild(level3Button);
     
     selectedLevel = new PIXI.Text("Selected Level: ", style);
@@ -136,8 +160,20 @@ function initializeTitle() {
     selectedLevelValue = new PIXI.Text("0", style);
     selectedLevelValue.anchor.set(0, 0.5);
     selectedLevelValue.position.set(gameWidth / 2 + 80, gameHeight / 2);
+    selectedLevelValue.text = "1";
     titleScene.addChild(selectedLevelValue);
-    
-    
-    
+}
+
+function changeLevel(level) {
+    selectedLevelValue.text = level;
+}
+
+function initializePlay() {
+    playScene = new PIXI.Container();
+    app.stage.addChild(playScene);
+}
+
+function initializeEnd() {
+    endScene = new PIXI.Container();
+    app.stage.addChild(endScene);
 }
