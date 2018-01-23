@@ -12,6 +12,18 @@ let app = new PIXI.Application({
   }
 );
 
+const SNAKE_LOGO = "images/snakelogo.png",
+      PLAY_IMG = "images/play.png",
+      LEVEL_1_IMG = "images/level1.png",
+      LEVEL_2_IMG = "images/level2.png",
+      LEVEL_3_IMG = "images/level3.png",
+      END_IMG = "images/gameover.png",
+      BACK_IMG = "images/back.png",
+      SPEED_1 = 5,
+      SPEED_2 = 10,
+      SPEED_3 = 15,
+      SNAKE_INITIAL_SIZE = 10;
+
 let state,
     titleScene,
     playScene,
@@ -39,16 +51,16 @@ let curentScore = 0, //VALUE
     endHighScoreVal,//TEXT
     endHint;//TEXT
 
-let snakeBody = [],
-    prevX,
-    prevY,
+let snakeHead,
+    snakeBody = [],
     snakeMove,
+    snakeCurrentSize = SNAKE_INITIAL_SIZE,
+    food,
+    activeFood = false,
     up,
     down,
     left,
-    right,
-    customVY,
-    customVX;
+    right;
 
 
 let style = new PIXI.TextStyle({
@@ -64,17 +76,6 @@ let style = new PIXI.TextStyle({
   dropShadowDistance: 1,
 });
 
-const SNAKE_LOGO = "images/snakelogo.png",
-      PLAY_IMG = "images/play.png",
-      LEVEL_1_IMG = "images/level1.png",
-      LEVEL_2_IMG = "images/level2.png",
-      LEVEL_3_IMG = "images/level3.png",
-      END_IMG = "images/gameover.png",
-      BACK_IMG = "images/back.png",
-      SPEED_1 = 5,
-      SPEED_2 = 10,
-      SPEED_3 = 15,
-      SNAKE_INITIAL_SIZE = 3;
 
 
 gameDiv.appendChild(app.view);
@@ -109,9 +110,6 @@ function title() {
         playScene.visible = false;
         endScene.visible = false;       
     }
-  
-
-
 }
 
 function play() {
@@ -123,43 +121,18 @@ function play() {
         reset();
     }
     
-//   prevX = snakeBody[0].vx;
-//   prevY= snakeBodu[0].vy;
-//   snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
-//   snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
+   moveSnake();
+   snakeWrap();
     
-   //move rest of body
-    moveRestOfBody();
+   if(!activeFood)
+       spawnFood();
+    
+   if(hit(food, snakeHead)) {
+       snakeCurrentSize++;
+       console.log("EATEN")
+    }
 }
 
-function moveRestOfBody() {
-    let snakeCurrSize = snakeBody.length;
-    
-    for(let i = snakeCurrSize-1; i > 0; i--) {
-        snakeBody[i].vx = snakeBody[i-1].vx;
-        snakeBody[i].vy = snakeBody[i-1].vy;
-        
-        snakeBody[i].x += snakeBody[i].vx * selectedActualValue;
-        snakeBody[i].y += snakeBody[i].vy * selectedActualValue;
-        
-    }
-        snakeBody[0].x += snakeBody[0].vx * selectedActualValue;
-        snakeBody[0].y += snakeBody[0].vy * selectedActualValue;
-}
-
-function determineSpeed() {
-    let temp = selectedLevelValue.text;
-            
-    if(temp === "1") {
-        selectedActualValue = SPEED_1;
-    }
-    else if(temp === "2") {
-        selectedActualValue = SPEED_2;
-    }
-    else {    
-        selectedActualValue = SPEED_3;
-    }
-}
 function end() {
     if(!endScene.visible) {
         endScene.visible = true;
@@ -238,17 +211,10 @@ function initializeTitle() {
     titleScene.visible = true;
 }
 
-function changeLevel(level) {
-    selectedLevelValue.text = level;
-}
-
 function initializePlay() {
     playScene = new PIXI.Container();
     app.stage.addChild(playScene);
-    
     initializeSnakeBody();
-    
-    
     playScene.visible = false;
 }
 
@@ -306,6 +272,151 @@ function initializeEnd() {
     endScene.visible = false;  
 }
 
+function initializeSnakeBody() {
+    snakeHead = createSnake();    
+
+    snakeHead.position.set(gameWidth/2, gameHeight/2);
+
+    //initialize move for the head ONLY.
+    up = keyboard(38);
+    down = keyboard(40);
+    left = keyboard(37);
+    right = keyboard(39);
+    
+    //initialize snake going up
+    snakeMove = up;
+    snakeHead.vx = 0;
+    snakeHead.vy = -1;
+    
+    up.press = function() {
+        if(snakeMove != up && snakeMove != down) {
+          snakeHead.vx = 0;
+          snakeHead.vy = -1;
+          snakeMove = up;
+        }
+
+    }
+
+    down.press = function() {
+        if(snakeMove != down && snakeMove != up) {
+            snakeHead.vx = 0;
+            snakeHead.vy = +1;
+            snakeMove = down;   
+        }
+
+    }
+
+    left.press = function() {
+        if(snakeMove != left && snakeMove != right) {
+            snakeHead.vx = -1;
+            snakeHead.vy = 0;
+            snakeMove = left;
+        }
+    }
+    
+    right.press = function() {
+        if(snakeMove != right && snakeMove != left) {
+            snakeHead.vx = +1;
+            snakeHead.vy = 0;
+            snakeMove = right;
+        }
+
+    }
+}
+
+function determineSpeed() {
+    let temp = selectedLevelValue.text;
+            
+    if(temp === "1") {
+        selectedActualValue = SPEED_1;
+    }
+    else if(temp === "2") {
+        selectedActualValue = SPEED_2;
+    }
+    else {    
+        selectedActualValue = SPEED_3;
+    }
+}
+
+function changeLevel(level) {
+    selectedLevelValue.text = level;
+}
+
+function createSnake() {
+    let snake = new PIXI.Graphics();
+    snake.lineStyle(1, 0xff0000, 1);
+    snake.beginFill(0xff0000);
+    snake.drawRect(0, 0, 20, 20);
+    snake.endFill();
+    
+    playScene.addChild(snake);
+    return snake;
+}
+
+function snakeWrap() {
+    
+    //right
+    console.log(snakeHead.x)
+    console.log(snakeHead.y)
+    
+    if(snakeHead.x > gameWidth) {
+        console.log("right")
+        snakeHead.x = 0;
+    }
+    
+    //up
+    if(snakeHead.y < 0) {
+        snakeHead.y = gameHeight;
+        console.log("up")
+    }
+    
+    //down
+    if(snakeHead.y > gameHeight) {
+        snakeHead.y = 0;
+        console.log("down")
+    }
+    
+    if(snakeHead.x < 0) {
+        snakeHead.x = gameHeight;
+        console.log("left")
+    }
+}
+
+function moveSnake() {
+    snakeHead.x += snakeHead.vx * selectedActualValue;
+    snakeHead.y += snakeHead.vy * selectedActualValue;
+    
+    let snake = createSnake();
+    
+    snake.x = snakeHead.x;
+    snake.y = snakeHead.y;
+    snakeBody.push(snake);
+    
+    if(snakeBody.length > snakeCurrentSize) {
+        playScene.removeChild(snakeBody[0])
+        snakeBody.splice(0, 1);    
+    }
+  
+}
+
+function spawnFood() {
+    food = new PIXI.Graphics();
+    food.lineStyle(2, 0x114FFA, 1);
+    food.beginFill(0x114FFA);
+    food.drawRect(0, 0, 5, 5);
+    food.endFill();
+    food.x = 350;
+    food.y = 350;
+    playScene.addChild(food);
+    activeFood = true
+    
+}
+
+function reset() {
+    curentScore = 0;
+    //delete snake and food
+}
+
 function keyboard(keyCode) {
   let key = {};
   key.code = keyCode;
@@ -343,86 +454,62 @@ function keyboard(keyCode) {
   return key;
 }
 
-function initializeSnakeBody() {
-    let currX, currY;
-    for(let i = 0; i < SNAKE_INITIAL_SIZE; i++) {
-        snakeBody.push(createSnake());
-        
-        //first, meaning head.
-        if(i === 0 ) {
-            snakeBody[i].position.set(gameWidth/2, gameHeight/2);
-            currX = gameWidth/2;
-            currY = gameHeight/2;
-        }
-        else {
-            currY += snakeBody[i].height;
-            snakeBody[i].position.set(currX, currY);
-            snakeBody[i].vx = 0;
-            snakeBody[i].vy = 0;
-        }
-    }
+
+
+function hit(r1, r2) {
+    let hit;
+    hit = false;
     
-    //initialize move for the head ONLY.
-    up = keyboard(38);
-    down = keyboard(40);
-    left = keyboard(37);
-    right = keyboard(39);
+    console.log(r1)
+    console.log(r2)
     
-    //initialize snake going up
-    snakeMove = up;
-    snakeBody[0].vx = 0;
-    snakeBody[0].vy = -1;
-    
-    up.press = function() {
-        if(snakeMove != up && snakeMove != down) {
-          snakeBody[0].vx = 0;
-          snakeBody[0].vy = -1;
-          snakeMove = up;
+    if(typeof r1 != "undefined" && typeof r2 != "undefined") {
+
+      //Define the variables we'll need to calculate
+      let combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+
+      //Find the center points of each sprite
+      r1.centerX = r1.x + r1.width / 2;
+      r1.centerY = r1.y + r1.height / 2;
+      r2.centerX = r2.x + r2.width / 2;
+      r2.centerY = r2.y + r2.height / 2;
+
+      //Find the half-widths and half-heights of each sprite
+      r1.halfWidth = r1.width / 2;
+      r1.halfHeight = r1.height / 2;
+      r2.halfWidth = r2.width / 2;
+      r2.halfHeight = r2.height / 2;
+
+      //Calculate the distance vector between the sprites
+      vx = r1.centerX - r2.centerX;
+      vy = r1.centerY - r2.centerY;
+
+      //Figure out the combined half-widths and half-heights
+      combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+      combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+      //Check for a collision on the x axis
+      if (Math.abs(vx) < combinedHalfWidths) {
+
+        //A collision might be occuring. Check for a collision on the y axis
+        if (Math.abs(vy) < combinedHalfHeights) {
+
+          //There's definitely a collision happening
+          hit = true;
+        } else {
+
+          //There's no collision on the y axis
+          hit = false;
         }
+      } else {
 
-    }
+        //There's no collision on the x axis
+        hit = false;
+      }
+  }
+    console.log(hit)
+  //`hit` will be either `true` or `false`
+  return hit;
 
-    down.press = function() {
-        if(snakeMove != down && snakeMove != up) {
-            snakeBody[0].vx = 0;
-            snakeBody[0].vy = +1;
-            snakeMove = down;   
-        }
-
-    }
-
-    left.press = function() {
-        if(snakeMove != left && snakeMove != right) {
-            snakeBody[0].vx = -1;
-            snakeBody[0].vy = 0;
-            snakeMove = left;
-        }
-    }
-    
-    right.press = function() {
-        if(snakeMove != right && snakeMove != left) {
-            snakeBody[0].vx = +1;
-            snakeBody[0].vy = 0;
-            snakeMove = right;
-        }
-
-    }
-}
-
-function createSnake() {
-    let snake = new PIXI.Graphics();
-    snake.lineStyle(2, 0xffffff, 1);
-    snake.beginFill(0xff0000);
-    snake.drawRect(0, 0, 35, 35);
-    snake.endFill();
-    
-    playScene.addChild(snake);
-    return snake;
-}
-
-function reset() {
-    curentScore = 0;
-    prevX = 0;
-    prevY = 0
-    //make snake 3 body parts again.
 }
