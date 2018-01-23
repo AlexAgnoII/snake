@@ -22,7 +22,8 @@ const SNAKE_LOGO = "images/snakelogo.png",
       SPEED_1 = 5,
       SPEED_2 = 10,
       SPEED_3 = 15,
-      SNAKE_INITIAL_SIZE = 10;
+      SNAKE_INITIAL_LENGTH = 10,
+      SNAKE_SIZE = 15; //refers to size of snake in terms of H and W;
 
 let state,
     titleScene,
@@ -44,6 +45,8 @@ let curentScore = 0, //VALUE
     selectedActualValue, //VALUE
     titlehighScore, //TEXT
     titlescoreMessage,//TEXT
+    playScoreMessage, //TEXT
+    playScoreValue, //TEXT
     endMessage,//TEXT
     endScoreValue,//TEXT
     endScoreMessage,//TEXT
@@ -54,7 +57,9 @@ let curentScore = 0, //VALUE
 let snakeHead,
     snakeBody = [],
     snakeMove,
-    snakeCurrentSize = SNAKE_INITIAL_SIZE,
+    snakeCurrentLength = SNAKE_INITIAL_LENGTH,
+    originalX,
+    originalY,
     food,
     activeFood = false,
     up,
@@ -127,10 +132,22 @@ function play() {
    if(!activeFood)
        spawnFood();
     
+    //Once eaten, make food dissapear.
    if(hit(food, snakeHead)) {
-       snakeCurrentSize++;
-       console.log("EATEN")
+       snakeCurrentLength++;
+       console.log("EATEN");
+       curentScore++;
+       playScoreValue.text = curentScore;
+       
+       playScene.removeChild(food);
+       activeFood = false;
     }
+    
+    checkForBodyHit();
+}
+
+function checkForBodyHit() {
+    
 }
 
 function end() {
@@ -214,6 +231,15 @@ function initializeTitle() {
 function initializePlay() {
     playScene = new PIXI.Container();
     app.stage.addChild(playScene);
+    
+    playScoreMessage = new PIXI.Text("Score: ", style);
+    playScene.addChild(playScoreMessage);
+    
+    playScoreValue = new PIXI.Text(curentScore, style);
+    playScoreValue.position.set(gameWidth / 6, 0);
+    playScene.addChild(playScoreValue);
+    
+    
     initializeSnakeBody();
     playScene.visible = false;
 }
@@ -277,7 +303,7 @@ function initializeSnakeBody() {
 
     snakeHead.position.set(gameWidth/2, gameHeight/2);
 
-    //initialize move for the head ONLY.
+    //initialize move 
     up = keyboard(38);
     down = keyboard(40);
     left = keyboard(37);
@@ -288,22 +314,21 @@ function initializeSnakeBody() {
     snakeHead.vx = 0;
     snakeHead.vy = -1;
     
+
     up.press = function() {
         if(snakeMove != up && snakeMove != down) {
-          snakeHead.vx = 0;
-          snakeHead.vy = -1;
-          snakeMove = up;
+            snakeHead.vx = 0;
+            snakeHead.vy = -1;
+            snakeMove = up; 
         }
-
     }
 
-    down.press = function() {
+     down.press = function() {
         if(snakeMove != down && snakeMove != up) {
             snakeHead.vx = 0;
             snakeHead.vy = +1;
             snakeMove = down;   
         }
-
     }
 
     left.press = function() {
@@ -312,8 +337,9 @@ function initializeSnakeBody() {
             snakeHead.vy = 0;
             snakeMove = left;
         }
+
     }
-    
+
     right.press = function() {
         if(snakeMove != right && snakeMove != left) {
             snakeHead.vx = +1;
@@ -323,6 +349,7 @@ function initializeSnakeBody() {
 
     }
 }
+
 
 function determineSpeed() {
     let temp = selectedLevelValue.text;
@@ -346,7 +373,7 @@ function createSnake() {
     let snake = new PIXI.Graphics();
     snake.lineStyle(1, 0xff0000, 1);
     snake.beginFill(0xff0000);
-    snake.drawRect(0, 0, 20, 20);
+    snake.drawRect(0, 0, SNAKE_SIZE, SNAKE_SIZE);
     snake.endFill();
     
     playScene.addChild(snake);
@@ -356,57 +383,67 @@ function createSnake() {
 function snakeWrap() {
     
     //right
-    console.log(snakeHead.x)
-    console.log(snakeHead.y)
+    //console.log(snakeHead.x)
+    //console.log(snakeHead.y)
     
     if(snakeHead.x > gameWidth) {
-        console.log("right")
+       // console.log("right")
         snakeHead.x = 0;
     }
     
     //up
     if(snakeHead.y < 0) {
         snakeHead.y = gameHeight;
-        console.log("up")
+        //console.log("up")
     }
     
     //down
     if(snakeHead.y > gameHeight) {
         snakeHead.y = 0;
-        console.log("down")
+        //console.log("down")
     }
     
     if(snakeHead.x < 0) {
         snakeHead.x = gameHeight;
-        console.log("left")
+        //console.log("left")
     }
 }
 
 function moveSnake() {
     snakeHead.x += snakeHead.vx * selectedActualValue;
     snakeHead.y += snakeHead.vy * selectedActualValue;
-    
+
+        
     let snake = createSnake();
-    
     snake.x = snakeHead.x;
     snake.y = snakeHead.y;
     snakeBody.push(snake);
-    
-    if(snakeBody.length > snakeCurrentSize) {
-        playScene.removeChild(snakeBody[0])
-        snakeBody.splice(0, 1);    
+        
+    originalX = snakeHead.x;
+    originalY = snakeHead.y;
+
+    if(snakeBody.length > snakeCurrentLength) {
+            playScene.removeChild(snakeBody[0])
+            snakeBody.splice(0, 1);    
     }
+    
   
 }
 
 function spawnFood() {
+    
+    let randomX = getRandomInt(0, gameWidth),
+        randomY= getRandomInt(0, gameHeight);
+    console.log("X =" + randomX);
+    console.log("Y =" + randomY);
+    
     food = new PIXI.Graphics();
     food.lineStyle(2, 0x114FFA, 1);
     food.beginFill(0x114FFA);
     food.drawRect(0, 0, 5, 5);
     food.endFill();
-    food.x = 350;
-    food.y = 350;
+    food.x = randomX;
+    food.y = randomY;
     playScene.addChild(food);
     activeFood = true
     
@@ -460,9 +497,6 @@ function hit(r1, r2) {
     let hit;
     hit = false;
     
-    console.log(r1)
-    console.log(r2)
-    
     if(typeof r1 != "undefined" && typeof r2 != "undefined") {
 
       //Define the variables we'll need to calculate
@@ -508,8 +542,11 @@ function hit(r1, r2) {
         hit = false;
       }
   }
-    console.log(hit)
-  //`hit` will be either `true` or `false`
+
   return hit;
 
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
