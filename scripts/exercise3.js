@@ -125,8 +125,9 @@ function play() {
         endScene.visible = false;
         titleScene.visible = false;
         determineSpeed();
+        frameDelay = SNAKE_SIZE; 
         reset();
-        frameDelay = SNAKE_SIZE;
+        initializeSnakeBody();
     }
     
    moveSnake();
@@ -167,6 +168,9 @@ function end() {
         playScene.visible = false;
         titleScene.visible = false;         
     }
+        
+    endHighScoreVal.text = highScore;
+    endScoreValue.text = curentScore;
 }
 
 function initializeTitle() {
@@ -250,8 +254,7 @@ function initializePlay() {
     playScoreValue.position.set(gameWidth / 6, 0);
     playScene.addChild(playScoreValue);
     
-    
-    initializeSnakeBody();
+
     playScene.visible = false;
 }
 
@@ -365,6 +368,7 @@ function initializeSnakeBody() {
         }
 
     }
+    
 }
 
 
@@ -474,7 +478,15 @@ function spawnFood() {
 
 function reset() {
     curentScore = 0;
+    activeFood = false;
+    
     //delete snake and food
+    playScene.removeChild(food);
+    playScene.removeChild(snakeHead);
+    while(snakeBody.length > 0) {
+        playScene.removeChild(snakeBody[0]);
+        snakeBody.splice(0, 1);
+    }
 }
 
 function keyboard(keyCode) {
