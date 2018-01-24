@@ -19,9 +19,9 @@ const SNAKE_LOGO = "images/snakelogo.png",
       LEVEL_3_IMG = "images/level3.png",
       END_IMG = "images/gameover.png",
       BACK_IMG = "images/back.png",
-      SPEED_1 = 1,
-      SPEED_2 = 2,
-      SPEED_3 = 3,
+      SPEED_1 = 5,
+      SPEED_2 = 10,
+      SPEED_3 = 15,
       SNAKE_INITIAL_LENGTH = 10,
       SNAKE_SIZE = 15, //refers to size of snake in terms of H and W;
       FOOD_AREA_SPAWN_LIMIT = 70; //refers to the limit (x pixels away from the walls) where food can be spawned 
@@ -147,7 +147,7 @@ function play() {
     }
     
     if(checkForBodyHit()) {
-        alert("DEAD");
+        state = end;
     }
 }
 
@@ -431,25 +431,25 @@ function snakeWrap() {
 function moveSnake() {
 
    
-   // frameDelay -= selectedActualValue;
-    //if(frameDelay <= 0) {
+    frameDelay -= selectedActualValue;
+    if(frameDelay <= 0) {
         let snake = createSnake();
-        snakeHead.x += snakeHead.vx * selectedActualValue;
-        snakeHead.y += snakeHead.vy * selectedActualValue;
+        snakeHead.x += snakeHead.vx /** selectedActualValue*/;
+        snakeHead.y += snakeHead.vy /** selectedActualValue*/;
         snake.x = originalX;
         snake.y = originalY;
 
         
         originalX = snakeHead.x;
         originalY = snakeHead.y;
-        //frameDelay = SNAKE_SIZE;
+        frameDelay = SNAKE_SIZE;
         snakeBody.push(snake);
         
         if(snakeBody.length > snakeCurrentLength) {
             playScene.removeChild(snakeBody[0])
             snakeBody.splice(0, 1);    
         }
-    //}
+    }
 }
 
 function spawnFood() {
