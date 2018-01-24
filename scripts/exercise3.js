@@ -19,9 +19,9 @@ const SNAKE_LOGO = "images/snakelogo.png",
       LEVEL_3_IMG = "images/level3.png",
       END_IMG = "images/gameover.png",
       BACK_IMG = "images/back.png",
-      SPEED_1 = 2,
-      SPEED_2 = 5,
-      SPEED_3 = 10,
+      SPEED_1 = 5,
+      SPEED_2 = 10,
+      SPEED_3 = 20,
       SNAKE_INITIAL_LENGTH = 10,
       SNAKE_SIZE = 15, //refers to size of snake in terms of H and W;
       FOOD_AREA_SPAWN_LIMIT = 70; //refers to the limit (x pixels away from the walls) where food can be spawned 
@@ -57,7 +57,6 @@ let curentScore = 0, //VALUE
 
 let snakeHead,
     snakeBody = [],
-    snakeNeck = [],
     snakeMove,
     snakeCurrentLength = SNAKE_INITIAL_LENGTH,
     originalX,
@@ -385,11 +384,13 @@ function changeLevel(level) {
 
 function createSnake() {
     let snake = new PIXI.Graphics();
-    snake.lineStyle(1, 0xff0000, 1);
+    //snake.lineStyle(1, 0xFFFFFF, 1);
     snake.beginFill(0xff0000);
     snake.drawRect(0, 0, SNAKE_SIZE, SNAKE_SIZE);
     snake.endFill();
     
+    console.log(snake.width);
+    console.log(snake.height);
     playScene.addChild(snake);
     return snake;
 }
@@ -400,38 +401,37 @@ function snakeWrap() {
     //console.log(snakeHead.x)
     //console.log(snakeHead.y)
     
-    if(snakeHead.x > gameWidth) {
+    if(snakeHead.x + snakeHead.width > gameWidth) {
        // console.log("right")
         snakeHead.x = 0;
     }
     
     //up
     if(snakeHead.y < 0) {
-        snakeHead.y = gameHeight;
+        snakeHead.y = gameHeight - snakeHead.height;
         //console.log("up")
     }
     
     //down
-    if(snakeHead.y > gameHeight) {
+    if(snakeHead.y + snakeHead.height > gameHeight) {
         snakeHead.y = 0;
         //console.log("down")
     }
     
     if(snakeHead.x < 0) {
-        snakeHead.x = gameHeight;
+        snakeHead.x = gameWidth - snakeHead.width;
         //console.log("left")
     }
 }
 
 function moveSnake() {
-    snakeHead.x += snakeHead.vx * selectedActualValue;
-    snakeHead.y += snakeHead.vy * selectedActualValue;
+
    
     frameDelay -= selectedActualValue;
     if(frameDelay <= 0) {
         let snake = createSnake();
-        //snake.x = snakeHead.x;
-        //snake.y = snakeHead.y;
+        snakeHead.x += snakeHead.vx * selectedActualValue;
+        snakeHead.y += snakeHead.vy * selectedActualValue;
         snake.x = originalX;
         snake.y = originalY;
         
@@ -440,24 +440,13 @@ function moveSnake() {
         originalY = snakeHead.y;
         frameDelay = SNAKE_SIZE;
         snakeBody.push(snake);
-    }
-    
-    let fakeSnake = createSnake();
-    fakeSnake.x = snakeHead.x;
-    fakeSnake.y = snakeHead.y;
-    snakeNeck.push(fakeSnake);
-    
-    
-    
-    if(snakeNeck.length > snakeCurrentLength) {
-        playScene.removeChild(snakeNeck[0])
-        snakeNeck.splice(0, 1);
-    }
-    
-    if(snakeBody.length > snakeCurrentLength) {
+        
+        if(snakeBody.length > snakeCurrentLength) {
             playScene.removeChild(snakeBody[0])
             snakeBody.splice(0, 1);    
+        }
     }
+
     
   
 }
