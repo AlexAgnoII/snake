@@ -126,7 +126,6 @@ function play() {
         titleScene.visible = false;
         determineSpeed();
         frameDelay = SNAKE_SIZE; 
-        reset();
         initializeSnakeBody();
     }
     
@@ -277,6 +276,7 @@ function initializeEnd() {
     backButton.on("pointerdown", function() {
         console.log("back to title")
         state = title;
+        reset();
     }); 
     endScene.addChild(backButton);
     
@@ -478,6 +478,7 @@ function spawnFood() {
 
 function reset() {
     curentScore = 0;
+    endScoreValue = playScoreValue = curentScore;
     activeFood = false;
     
     //delete snake and food
