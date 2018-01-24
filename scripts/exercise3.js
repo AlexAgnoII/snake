@@ -19,11 +19,12 @@ const SNAKE_LOGO = "images/snakelogo.png",
       LEVEL_3_IMG = "images/level3.png",
       END_IMG = "images/gameover.png",
       BACK_IMG = "images/back.png",
-      SPEED_1 = 5,
-      SPEED_2 = 10,
-      SPEED_3 = 15,
+      SPEED_1 = 2,
+      SPEED_2 = 5,
+      SPEED_3 = 10,
       SNAKE_INITIAL_LENGTH = 10,
-      SNAKE_SIZE = 15; //refers to size of snake in terms of H and W;
+      SNAKE_SIZE = 15, //refers to size of snake in terms of H and W;
+      FOOD_AREA_SPAWN_LIMIT = 70; //refers to the limit (x pixels away from the walls) where food can be spawned 
 
 let state,
     titleScene,
@@ -56,6 +57,7 @@ let curentScore = 0, //VALUE
 
 let snakeHead,
     snakeBody = [],
+    snakeNeck = [],
     snakeMove,
     snakeCurrentLength = SNAKE_INITIAL_LENGTH,
     originalX,
@@ -65,7 +67,8 @@ let snakeHead,
     up,
     down,
     left,
-    right;
+    right,
+    frameDelay;
 
 
 let style = new PIXI.TextStyle({
@@ -124,6 +127,7 @@ function play() {
         titleScene.visible = false;
         determineSpeed();
         reset();
+        frameDelay = SNAKE_SIZE;
     }
     
    moveSnake();
@@ -135,7 +139,7 @@ function play() {
     //Once eaten, make food dissapear.
    if(hit(food, snakeHead)) {
        snakeCurrentLength++;
-       console.log("EATEN");
+       //console.log("EATEN");
        curentScore++;
        playScoreValue.text = curentScore;
        
@@ -143,11 +147,19 @@ function play() {
        activeFood = false;
     }
     
-    checkForBodyHit();
+//    if(checkForBodyHit()) {
+//        alert("DEAD");
+//    }
 }
 
 function checkForBodyHit() {
-    
+    for(let i = 0; i < snakeCurrentLength; i++) {
+        if(hit(snakeBody[i], snakeHead)) {
+           return true;
+        }
+    }
+           
+    return false;
 }
 
 function end() {
@@ -300,8 +312,10 @@ function initializeEnd() {
 
 function initializeSnakeBody() {
     snakeHead = createSnake();    
-
     snakeHead.position.set(gameWidth/2, gameHeight/2);
+    
+    originalX = snakeHead.x;
+    originalY = snakeHead.y;
 
     //initialize move 
     up = keyboard(38);
@@ -412,16 +426,34 @@ function snakeWrap() {
 function moveSnake() {
     snakeHead.x += snakeHead.vx * selectedActualValue;
     snakeHead.y += snakeHead.vy * selectedActualValue;
-
+   
+    frameDelay -= selectedActualValue;
+    if(frameDelay <= 0) {
+        let snake = createSnake();
+        //snake.x = snakeHead.x;
+        //snake.y = snakeHead.y;
+        snake.x = originalX;
+        snake.y = originalY;
         
-    let snake = createSnake();
-    snake.x = snakeHead.x;
-    snake.y = snakeHead.y;
-    snakeBody.push(snake);
         
-    originalX = snakeHead.x;
-    originalY = snakeHead.y;
-
+        originalX = snakeHead.x;
+        originalY = snakeHead.y;
+        frameDelay = SNAKE_SIZE;
+        snakeBody.push(snake);
+    }
+    
+    let fakeSnake = createSnake();
+    fakeSnake.x = snakeHead.x;
+    fakeSnake.y = snakeHead.y;
+    snakeNeck.push(fakeSnake);
+    
+    
+    
+    if(snakeNeck.length > snakeCurrentLength) {
+        playScene.removeChild(snakeNeck[0])
+        snakeNeck.splice(0, 1);
+    }
+    
     if(snakeBody.length > snakeCurrentLength) {
             playScene.removeChild(snakeBody[0])
             snakeBody.splice(0, 1);    
@@ -431,17 +463,18 @@ function moveSnake() {
 }
 
 function spawnFood() {
-    
-    let randomX = getRandomInt(0, gameWidth),
-        randomY= getRandomInt(0, gameHeight);
-    console.log("X =" + randomX);
-    console.log("Y =" + randomY);
+    let randomX = getRandomInt(FOOD_AREA_SPAWN_LIMIT, 
+                               Math.abs(gameWidth - FOOD_AREA_SPAWN_LIMIT)),
+        randomY= getRandomInt(FOOD_AREA_SPAWN_LIMIT, 
+                              Math.abs(gameHeight - FOOD_AREA_SPAWN_LIMIT));
     
     food = new PIXI.Graphics();
     food.lineStyle(2, 0x114FFA, 1);
     food.beginFill(0x114FFA);
     food.drawRect(0, 0, 5, 5);
     food.endFill();
+    
+    //random again if food collides to any of the body.
     food.x = randomX;
     food.y = randomY;
     playScene.addChild(food);
