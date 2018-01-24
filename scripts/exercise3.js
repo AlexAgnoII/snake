@@ -146,9 +146,9 @@ function play() {
        activeFood = false;
     }
     
-//    if(checkForBodyHit()) {
-//        alert("DEAD");
-//    }
+    if(checkForBodyHit()) {
+        alert("DEAD");
+    }
 }
 
 function checkForBodyHit() {
@@ -325,7 +325,7 @@ function initializeSnakeBody() {
     //initialize snake going up
     snakeMove = up;
     snakeHead.vx = 0;
-    snakeHead.vy = -1;
+    snakeHead.vy = -SNAKE_SIZE;
     
 
     up.press = function() {
@@ -388,7 +388,7 @@ function changeLevel(level) {
 
 function createSnake() {
     let snake = new PIXI.Graphics();
-    snake.lineStyle(1, 0xFFFFFF, 1);
+    //snake.lineStyle(1, 0xFFFFFF, 1);
     snake.beginFill(0xff0000);
     snake.drawRect(0, 0, SNAKE_SIZE, SNAKE_SIZE);
     snake.endFill();
@@ -450,9 +450,6 @@ function moveSnake() {
             snakeBody.splice(0, 1);    
         }
     //}
-
-    
-  
 }
 
 function spawnFood() {
