@@ -83,46 +83,30 @@ let style = new PIXI.TextStyle({
   dropShadowDistance: 1,
 });
 
-let xmlhttp, //XML file
-    xmlDoc; //document form.
+let storage = window.localStorage;
 
-const xmlFile = "xml/highscore.xml";
-
-
-if(window.XMLHttpRequest) {
-    xmlhttp = new XMLHttpRequest();
+if(storage.getItem("highScore")) {
+    console.log("Has highscore already. " + storage.highScore)
 }
 else {
-    xmlhttp = new ActiveXObject("Microsoft.XMLDOM");
+    console.log("wala pa")
+    storage.setItem("highScore", "0");
 }
 
-xmlhttp.open("GET", xmlFile, false);
-xmlhttp.send();
-xmlDoc = xmlhttp.responseXML;
 
-if(xmlDoc != null) {
-    console.log("Read");
-    highScore=getHighScore();
-    main();
-}
-else {
-    console.log("not read");
-}
+main();
 
 function getHighScore() {  
-    let value = xmlDoc.getElementsByTagName("score");
-    return parseInt(value[0].firstChild.nodeValue);
+    return parseInt(storage.highScore);
 }
 
 function updateHighScore(score) {
-    let value = xmlDoc.getElementsByTagName("score");
-    value[0].firstChild.nodeValue = score;
-    console.log(value[0].firstChild.nodeValue);
-    alert();
+    storage.highScore = score+"";
 }
 
 
 function main() {
+    highScore=getHighScore();
     gameDiv.appendChild(app.view);
     PIXI.loader
         .add([SNAKE_LOGO, 
