@@ -83,19 +83,58 @@ let style = new PIXI.TextStyle({
   dropShadowDistance: 1,
 });
 
+let xmlhttp, //XML file
+    xmlDoc; //document form.
+
+const xmlFile = "xml/highscore.xml";
 
 
-gameDiv.appendChild(app.view);
+if(window.XMLHttpRequest) {
+    xmlhttp = new XMLHttpRequest();
+}
+else {
+    xmlhttp = new ActiveXObject("Microsoft.XMLDOM");
+}
 
-PIXI.loader
-    .add([SNAKE_LOGO, 
-          PLAY_IMG,
-          LEVEL_1_IMG, 
-          LEVEL_2_IMG, 
-          LEVEL_3_IMG,
-          END_IMG,
-          BACK_IMG])
-    .load(setup);
+xmlhttp.open("GET", xmlFile, false);
+xmlhttp.send();
+xmlDoc = xmlhttp.responseXML;
+
+if(xmlDoc != null) {
+    console.log("Read");
+    highScore=getHighScore();
+    main();
+}
+else {
+    console.log("not read");
+}
+
+function getHighScore() {  
+    let value = xmlDoc.getElementsByTagName("score");
+    return parseInt(value[0].firstChild.nodeValue);
+}
+
+function updateHighScore(score) {
+    let value = xmlDoc.getElementsByTagName("score");
+    value[0].firstChild.nodeValue = score;
+    console.log(value[0].firstChild.nodeValue);
+    alert();
+}
+
+
+function main() {
+    gameDiv.appendChild(app.view);
+    PIXI.loader
+        .add([SNAKE_LOGO, 
+              PLAY_IMG,
+              LEVEL_1_IMG, 
+              LEVEL_2_IMG, 
+              LEVEL_3_IMG,
+              END_IMG,
+              BACK_IMG])
+        .load(setup);
+}
+
 
 function setup() {
     
@@ -145,6 +184,7 @@ function play() {
        activeFood = false;
     }
     
+    console.log(curentScore);
     if(checkForBodyHit()) {
         state = end;
     }
@@ -166,9 +206,17 @@ function end() {
         playScene.visible = false;
         titleScene.visible = false;         
     }
-        
-    endHighScoreVal.text = highScore;
+    
     endScoreValue.text = curentScore;
+    
+    if(curentScore > highScore) {
+        endHighScoreVal.text = curentScore;
+        highScore = curentScore;
+        updateHighScore(curentScore);
+    }
+    else {
+        endHighScoreVal.text = highScore;
+    }
 }
 
 function initializeTitle() {
@@ -294,7 +342,6 @@ function initializeEnd() {
     endHighScoreMsg.anchor.set(1, 0.5);
     endScene.addChild(endHighScoreMsg);
     
-    console.log(highScore)
     endHighScoreVal = new PIXI.Text(highScore, style);
     endHighScoreVal.position.set(gameWidth/2 + 40, gameHeight/2 + 50);
     endHighScoreVal.anchor.set(0, 0.5);
@@ -396,8 +443,8 @@ function createSnake() {
     snake.drawRect(0, 0, SNAKE_SIZE, SNAKE_SIZE);
     snake.endFill();
     
-    console.log(snake.width);
-    console.log(snake.height);
+    //console.log(snake.width);
+    //console.log(snake.height);
     playScene.addChild(snake);
     return snake;
 }
@@ -488,6 +535,7 @@ function reset() {
         playScene.removeChild(snakeBody[0]);
         snakeBody.splice(0, 1);
     }
+    titlehighScore.text = highScore;
     snakeCurrentLength = SNAKE_INITIAL_LENGTH;
 }
 
