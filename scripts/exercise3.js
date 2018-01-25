@@ -22,7 +22,7 @@ const SNAKE_LOGO = "images/snakelogo.png",
       SPEED_1 = 5,
       SPEED_2 = 10,
       SPEED_3 = 15,
-      SNAKE_INITIAL_LENGTH = 10,
+      SNAKE_INITIAL_LENGTH = 5,
       SNAKE_SIZE = 15, //refers to size of snake in terms of H and W;
       FOOD_AREA_SPAWN_LIMIT = 70; //refers to the limit (x pixels away from the walls) where food can be spawned 
 
@@ -488,6 +488,7 @@ function reset() {
         playScene.removeChild(snakeBody[0]);
         snakeBody.splice(0, 1);
     }
+    snakeCurrentLength = SNAKE_INITIAL_LENGTH;
 }
 
 function keyboard(keyCode) {
