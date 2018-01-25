@@ -141,7 +141,6 @@ function play() {
        //console.log("EATEN");
        curentScore++;
        playScoreValue.text = curentScore;
-       
        playScene.removeChild(food);
        activeFood = false;
     }
@@ -478,7 +477,8 @@ function spawnFood() {
 
 function reset() {
     curentScore = 0;
-    endScoreValue = playScoreValue = curentScore;
+    endScoreValue.text = 0;
+    playScoreValue.text = 0;
     activeFood = false;
     
     //delete snake and food
