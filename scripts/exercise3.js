@@ -337,7 +337,14 @@ function initializeEnd() {
     endHint.anchor.set(0.5, 1);
     endScene.addChild(endHint);
     
+    let letterR = keyboard(82);
     
+    letterR.press = function() {
+        if(endScene.visible) {
+            state = play;
+            reset();
+        }
+    };
     
     endScene.visible = false;  
 }
@@ -492,6 +499,8 @@ function spawnFood() {
         randomY= getRandomInt(FOOD_AREA_SPAWN_LIMIT, 
                               Math.abs(gameHeight - FOOD_AREA_SPAWN_LIMIT));
     
+    let collide = false;
+    
     food = new PIXI.Graphics();
     food.lineStyle(2, 0x114FFA, 1);
     food.beginFill(0x114FFA);
@@ -499,8 +508,23 @@ function spawnFood() {
     food.endFill();
     
     //random again if food collides to any of the body.
-    food.x = randomX;
-    food.y = randomY;
+    do {
+        food.x = randomX;
+        food.y = randomY;
+        
+        if(hit(snakeHead, food)) {
+            collide = true;
+        }
+        else {
+            for (let i = 0; i < snakeBody.length ;i++) {
+                if(hit(food, snakeBody[i])) {
+                    collide = true;   
+                }
+            }
+        }
+    }while(collide);
+    
+    
     playScene.addChild(food);
     activeFood = true
     
